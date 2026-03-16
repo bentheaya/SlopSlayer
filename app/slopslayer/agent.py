@@ -82,7 +82,10 @@ root_agent = Agent(
     model="gemini-live-2.5-flash-native-audio",   # Reverted back to the original working Live model!
     description="Real-time Gen-Z deepfake and AI slop buster",
     instruction=SYSTEM_INSTRUCTION,
-    tools=[google_search]   # This is your RAG/grounding
+    tools=[google_search],   # This is your RAG/grounding
+    generate_content_config={
+        "response_modalities": ["AUDIO"]
+    }
 )
 
 logger.info("✅ SlopSlayer root_agent initialized successfully.")

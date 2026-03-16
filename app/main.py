@@ -1,13 +1,16 @@
 import os
 import logging
-from datetime import datetime
+import uvicorn
+import certifi
 from dotenv import load_dotenv
-from slopslayer.agent import root_agent
-from google.adk.runners import Runner
-from google.adk.sessions.in_memory_session_service import InMemorySessionService
+
+# Set SSL_CERT_FILE for WebRTC/Live API BEFORE loading anything else
+os.environ["SSL_CERT_FILE"] = certifi.where()
 
 # Load environment variables from .env
 load_dotenv()
+
+from google.adk.cli.fast_api import get_fast_api_app
 
 # Configure logging
 logging.basicConfig(
@@ -23,24 +26,27 @@ logger = logging.getLogger('slopslayer.main')
 
 def main():
     try:
-        logger.info("Starting SlopSlayer Agent...")
+        host = os.environ.get("HOST", "0.0.0.0")
+        port = int(os.environ.get("PORT", 8080))
         
-        # Initialize Runner with default in-memory session service
-        session_service = InMemorySessionService()
-        runner = Runner(
-            app_name="SlopSlayer",
-            agent=root_agent,
-            session_service=session_service,
-            auto_create_session=True
+        logger.info(f"Starting SlopSlayer Web Server on http://{host}:{port}...")
+        
+        # Get the ADK FastAPI app
+        # 'app' directory contains the 'slopslayer' agent folder
+        app = get_fast_api_app(
+            agents_dir="app",
+            web=True,
+            host=host,
+            port=port
         )
         
-        logger.info("Agent is ready. (In a real deployment, this would be wrapped in a server like FastAPI)")
+        logger.info("Access the Developer UI at http://localhost:8000/dev-ui")
         
-        # Note: For real-time interaction, ADK usually runs a server.
-        # This script serves as a programmatic entry point for testing/initialization.
+        # Start uvicorn
+        uvicorn.run(app, host=host, port=port, log_level="info")
         
     except Exception as e:
-        logger.error(f"Failed to start agent: {e}", exc_info=True)
+        logger.error(f"Failed to start server: {e}", exc_info=True)
         raise
 
 if __name__ == "__main__":
