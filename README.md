@@ -22,8 +22,8 @@ In 2026, the internet is flooded with "AI Slop"—deepfakes, synthetic voices, a
 1. **Clone the repo:** `git clone https://github.com/bentheaya/SlopSlayer.git`
 2. **Setup Environment:** Create a `.env` file with your `VITE_GCP_PROJECT_ID` and `VITE_GCP_LOCATION`.
 3. **Install Dependencies:** `npm install`
-4. **Run Local:** `npm run dev`
-5. **Deploy to Cloud Run:** `gcloud run deploy --source .`
+4. **Run Local:** `python app/main.py`
+5. **Deploy to Cloud Run:** `gcloud run deploy --source app/`
 
 ## Innovation Points
 - **Two-Tier Grounding:** Combines visual artifact detection with real-time fact-check retrieval.

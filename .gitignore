@@ -174,3 +174,7 @@ ngrok.exe
 # OS specific
 .DS_Store
 Thumbs.db
+
+# Log files
+*.log
+app/*.log

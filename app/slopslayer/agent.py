@@ -1,5 +1,22 @@
+import logging
 from google.adk.agents import Agent
-from google.adk.tools import google_search   # This is your grounding tool
+from google.adk.tools import google_search as original_google_search
+
+logger = logging.getLogger("slopslayer.agent")
+
+# Wrap the google_search tool to add logging
+def google_search(query: str):
+    """
+    Search Google for the given query to verify claims.
+    """
+    logger.info(f"🔍 Grounding check: Searching Google for '{query}'")
+    try:
+        results = original_google_search(query)
+        logger.debug(f"✅ Search results for '{query}': {results[:200]}...") # Log beginning of results
+        return results
+    except Exception as e:
+        logger.error(f"❌ Search failed for '{query}': {e}", exc_info=True)
+        return f"Search failed: {e}"
 
 # === YOUR FULL REFINED SYSTEM PROMPT (paste here) ===
 SYSTEM_INSTRUCTION = """
@@ -58,6 +75,8 @@ Start every new session the moment the first frame arrives:
 IMPORTANT: For any fact-check or claim, call the tool named 'google_search' with a precise query.
 """
 
+logger.debug("Initializing SlopSlayer agent with Gemini 2.5 Flash Native Audio...")
+
 root_agent = Agent(
     name="slopslayer",
     model="gemini-live-2.5-flash-native-audio",   # Reverted back to the original working Live model!
@@ -65,3 +84,5 @@ root_agent = Agent(
     instruction=SYSTEM_INSTRUCTION,
     tools=[google_search]   # This is your RAG/grounding
 )
+
+logger.info("✅ SlopSlayer root_agent initialized successfully.")
