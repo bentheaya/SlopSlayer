@@ -33,15 +33,15 @@ To deploy SlopSlayer to the cloud:
 
 1.  **Build the Container**:
     ```bash
-    gcloud builds submit --tag gcr.io/[PROJECT_ID]/slopslayer
+    gcloud builds submit --tag gcr.io/slopslayer/slopslayer
     ```
 2.  **Deploy to Cloud Run**:
     ```bash
     gcloud run deploy slopslayer \
-      --image gcr.io/[PROJECT_ID]/slopslayer \
+      --image gcr.io/slopslayer/slopslayer \
       --platform managed \
       --allow-unauthenticated \
-      --set-env-vars="GOOGLE_CLOUD_PROJECT=[PROJECT_ID],GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=True"
+      --set-env-vars="GOOGLE_CLOUD_PROJECT=slopslayer,GOOGLE_CLOUD_LOCATION=us-central1,GOOGLE_GENAI_USE_VERTEXAI=True"
     ```
 3.  **Access the URL**: Cloud Run will provide a `.a.run.app` URL. Append `/dev-ui` to access the interface.
 
